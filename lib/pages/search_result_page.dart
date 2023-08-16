@@ -11,7 +11,7 @@ class SearchPageRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final argList = ModalRoute.of(context)!.settings.arguments as List;
-    final BusRoute route = argList[0];
+    final BusRoute? route = argList[0];
     final String departureDate = argList[1];
     // final provider = Provider.of<AppDataProvider>(context);
     // provider.getSchedulesByRouteName(route.routeName);
@@ -19,34 +19,35 @@ class SearchPageRoute extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Search Result on '),
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          Text(
-              'Showing Result ${route.cityFrom} to ${route.cityTo} on $departureDate',
-              style:
-                  const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          Consumer<AppDataProvider>(builder: (context, provider, _) {
-            return FutureBuilder<List<BusSchedule>>(
-                future: provider.getSchedulesByRouteName(route.routeName),
-                builder: (context, snapshot) {
-                  final scheduleList = snapshot.data!;
-                  if (snapshot.hasData) {
-                    return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: scheduleList
-                            .map((e) => ScheduleItemView(
-                                date: departureDate, schedule: e))
-                            .toList());
-                  }
-                  if (snapshot.hasError) {
-                    return const Text('Failed to fetch data');
-                  }
-                  return const Center(child: CircularProgressIndicator());
-                });
-          })
-        ],
-      ),
+      body: ListView(padding: const EdgeInsets.all(16), children: [
+        Text(
+          route != null
+              ? 'Showing Result ${route.cityFrom} to ${route.cityTo} on $departureDate'
+              : '', // Replace this with an appropriate error message
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        route != null
+            ? Consumer<AppDataProvider>(builder: (context, provider, _) {
+                return FutureBuilder<List<BusSchedule>>(
+                    future: provider.getSchedulesByRouteName(route.routeName),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        final scheduleList = snapshot.data!;
+                        return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: scheduleList
+                                .map((e) => ScheduleItemView(
+                                    date: departureDate, schedule: e))
+                                .toList());
+                      }
+                      if (snapshot.hasError) {
+                        return const Text('Failed to fetch data');
+                      }
+                      return const Center(child: CircularProgressIndicator());
+                    });
+              })
+            : const Text("No Bus is Available")
+      ]),
     );
   }
 }

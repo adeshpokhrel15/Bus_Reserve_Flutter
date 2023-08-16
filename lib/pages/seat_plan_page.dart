@@ -1,4 +1,5 @@
 import 'package:bus_reservation_udemy/models/bus_schedule.dart';
+import 'package:bus_reservation_udemy/utils/colors.dart';
 import 'package:flutter/material.dart';
 
 class SeatPlanPage extends StatefulWidget {
@@ -31,6 +32,63 @@ class _SeatPlanPageState extends State<SeatPlanPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Seat Plan Page"),
+      ),
+      body: Center(
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 20,
+                        height: 20,
+                        color: seatBookedColor,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      const Text(
+                        "Booked",
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
+                      )
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 20,
+                        height: 20,
+                        color: seatAvailableColor,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      const Text(
+                        "Available",
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            ValueListenableBuilder(
+                valueListenable: selectedSeatStringNotifier,
+                builder: (context, value, _) {
+                  return Text("Selected Seat $value");
+                }),
+            OutlinedButton(onPressed: () {}, child: const Text("NEXT"))
+          ],
+        ),
       ),
     );
   }
